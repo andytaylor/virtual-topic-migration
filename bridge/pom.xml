@@ -1,0 +1,220 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+  <!-- <parent>
+      <groupId>org.apache.camel.example</groupId>
+      <artifactId>examples</artifactId>
+      <version>3.2.0</version>
+   </parent>-->
+
+   <artifactId>bridge</artifactId>
+   <groupId>org.apache.activemq.example</groupId>
+   <name>ActiveMQ virtual topic bridge example</name>
+   <version>1.0.0-SNAPSHOT</version>
+
+   <properties>
+      <category>Messaging</category>
+      <title>Spring JMS</title>
+      <camel.version>2.25.1</camel.version>
+      <activemq-version>5.15.12</activemq-version>
+      <log4j2-version>2.13.2</log4j2-version>
+      <xbean-spring-version>4.14</xbean-spring-version>
+      <camel.osgi.export.pkg>org.apache.camel.example.server.*</camel.osgi.export.pkg>
+      <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
+      </camel.osgi.import.additional>
+   </properties>
+
+   <dependencyManagement>
+      <dependencies>
+         <!-- Add Camel BOM -->
+         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bom</artifactId>
+            <version>${camel.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+         </dependency>
+      </dependencies>
+   </dependencyManagement>
+
+   <dependencies>
+      <!-- START SNIPPET: e1 -->
+      <!-- required by both client and server -->
+      <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-core</artifactId>
+         <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-jms</artifactId>
+         <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-spring</artifactId>
+         <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-jackson</artifactId>
+         <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.activemq</groupId>
+         <artifactId>activemq-camel</artifactId>
+         <version>${activemq-version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.logging.log4j</groupId>
+         <artifactId>log4j-api</artifactId>
+         <version>${log4j2-version}</version>
+         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.logging.log4j</groupId>
+         <artifactId>log4j-core</artifactId>
+         <version>${log4j2-version}</version>
+         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.logging.log4j</groupId>
+         <artifactId>log4j-slf4j-impl</artifactId>
+         <version>${log4j2-version}</version>
+         <scope>runtime</scope>
+      </dependency>
+
+     <!-- <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-activemq</artifactId>
+         <version>5.15.2</version>
+         &lt;!&ndash; lets use JMS 2.0 api but camel-jms still works with ActiveMQ 5.x that is JMS 1.1 only &ndash;&gt;
+         <exclusions>
+            <exclusion>
+               <groupId>org.apache.geronimo.specs</groupId>
+               <artifactId>geronimo-jms_1.1_spec</artifactId>
+            </exclusion>
+         </exclusions>
+      </dependency>-->
+   <!--   <dependency>
+         <groupId>org.apache.activemq</groupId>
+         <artifactId>activemq-pool</artifactId>
+         <version>${activemq-version}</version>
+         &lt;!&ndash; lets use JMS 2.0 api but camel-jms still works with ActiveMQ 5.x that is JMS 1.1 only &ndash;&gt;
+         <exclusions>
+            <exclusion>
+               <groupId>org.apache.geronimo.specs</groupId>
+               <artifactId>geronimo-jms_1.1_spec</artifactId>
+            </exclusion>
+         </exclusions>
+      </dependency>     &lt;!&ndash; END SNIPPET: e1 &ndash;&gt;
+
+      &lt;!&ndash; START SNIPPET: e2 &ndash;&gt;
+      &lt;!&ndash; xbean is required for ActiveMQ broker configuration in the spring xml file &ndash;&gt;
+      <dependency>
+         <groupId>org.apache.xbean</groupId>
+         <artifactId>xbean-spring</artifactId>
+         <version>${xbean-spring-version}</version>
+      </dependency>
+      &lt;!&ndash; END SNIPPET: e2 &ndash;&gt;
+
+      &lt;!&ndash; logging &ndash;&gt;
+      <dependency>
+         <groupId>org.apache.logging.log4j</groupId>
+         <artifactId>log4j-api</artifactId>
+         <version>${log4j2-version}</version>
+         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.logging.log4j</groupId>
+         <artifactId>log4j-core</artifactId>
+         <version>${log4j2-version}</version>
+         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.logging.log4j</groupId>
+         <artifactId>log4j-slf4j-impl</artifactId>
+         <version>${log4j2-version}</version>
+         <scope>runtime</scope>
+      </dependency>
+
+      &lt;!&ndash; for testing &ndash;&gt;
+      <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-test-spring</artifactId>
+         <scope>test</scope>
+      </dependency>-->
+
+   </dependencies>
+
+   <profiles>
+      <profile>
+         <id>CamelServer</id>
+         <properties>
+            <!-- we use Camel spring Main class as the server got all what it needs to start in the camel-server.xml file -->
+            <target.main.class>org.apache.camel.spring.Main</target.main.class>
+            <target.cmd.args>-ac META-INF/spring/bridge.xml</target.cmd.args>
+         </properties>
+      </profile>
+      <profile>
+         <id>CamelClient</id>
+         <properties>
+            <!-- we start using our own class to control what we do in the main -->
+            <target.main.class>org.apache.camel.example.client.CamelClient</target.main.class>
+         </properties>
+      </profile>
+      <profile>
+         <id>CamelClientRemoting</id>
+         <properties>
+            <!-- we start using our own class to control what we do in the main -->
+            <target.main.class>org.apache.camel.example.client.CamelClientRemoting</target.main.class>
+         </properties>
+      </profile>
+      <profile>
+         <id>CamelClientEndpoint</id>
+         <properties>
+            <!-- we start using our own class to control what we do in the main -->
+            <target.main.class>org.apache.camel.example.client.CamelClientEndpoint</target.main.class>
+         </properties>
+      </profile>
+   </profiles>
+   <build>
+
+      <plugins>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>attach-artifacts</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>attach-artifact</goal>
+                  </goals>
+                  <configuration>
+                     <artifacts>
+                        <artifact>
+                           <file>target/classes/features.xml</file>
+                           <type>xml</type>
+                           <classifier>features</classifier>
+                        </artifact>
+                     </artifacts>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+
+         <!-- Allows the example to be run via 'mvn compile exec:java' -->
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <configuration>
+               <mainClass>${target.main.class}</mainClass>
+               <includePluginDependencies>false</includePluginDependencies>
+               <commandlineArgs>${target.cmd.args}</commandlineArgs>
+            </configuration>
+         </plugin>
+      </plugins>
+
+   </build>
+</project>
