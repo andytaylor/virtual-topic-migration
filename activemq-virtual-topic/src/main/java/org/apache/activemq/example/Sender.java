@@ -12,11 +12,11 @@ import javax.jms.TextMessage;
 
 public class Sender {
    public static void main(String[] args) throws Exception {
-      String user = env("ACTIVEMQ_USER", "admin");
-      String password = env("ACTIVEMQ_PASSWORD", "password");
-      String host = env("ACTIVEMQ_HOST", "localhost");
-      int port = Integer.parseInt(env("ACTIVEMQ_PORT", "61616"));
       String destination = arg(args, 0, "event");
+      String host = arg(args, 1, "localhost");
+      int port = Integer.parseInt(arg(args, 2, "61616"));
+      String user = arg(args, 3, "admin");
+      String password = arg(args, 4, "password");
 
       int messages = 1000000;
       int size = 256;
