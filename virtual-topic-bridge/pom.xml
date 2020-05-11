@@ -1,14 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
-  <!-- <parent>
-      <groupId>org.apache.camel.example</groupId>
-      <artifactId>examples</artifactId>
-      <version>3.2.0</version>
-   </parent>-->
+   <parent>
+      <groupId>org.apache.activemq.example</groupId>
+      <artifactId>virtual-topic-migration</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+   </parent>
 
-   <artifactId>bridge</artifactId>
-   <groupId>org.apache.activemq.example</groupId>
+   <artifactId>virtual-topic-bridge</artifactId>
    <name>ActiveMQ virtual topic bridge example</name>
    <version>1.0.0-SNAPSHOT</version>
 
@@ -16,7 +15,6 @@
       <category>Messaging</category>
       <title>Spring JMS</title>
       <camel.version>2.25.1</camel.version>
-      <activemq-version>5.15.12</activemq-version>
       <log4j2-version>2.13.2</log4j2-version>
       <xbean-spring-version>4.14</xbean-spring-version>
       <camel.osgi.export.pkg>org.apache.camel.example.server.*</camel.osgi.export.pkg>
@@ -63,7 +61,7 @@
       <dependency>
          <groupId>org.apache.activemq</groupId>
          <artifactId>activemq-camel</artifactId>
-         <version>${activemq-version}</version>
+         <version>${activemq.version}</version>
       </dependency>
       <dependency>
          <groupId>org.apache.logging.log4j</groupId>
@@ -155,66 +153,41 @@
             <target.main.class>org.apache.camel.spring.Main</target.main.class>
             <target.cmd.args>-ac META-INF/spring/bridge.xml</target.cmd.args>
          </properties>
-      </profile>
-      <profile>
-         <id>CamelClient</id>
-         <properties>
-            <!-- we start using our own class to control what we do in the main -->
-            <target.main.class>org.apache.camel.example.client.CamelClient</target.main.class>
-         </properties>
-      </profile>
-      <profile>
-         <id>CamelClientRemoting</id>
-         <properties>
-            <!-- we start using our own class to control what we do in the main -->
-            <target.main.class>org.apache.camel.example.client.CamelClientRemoting</target.main.class>
-         </properties>
-      </profile>
-      <profile>
-         <id>CamelClientEndpoint</id>
-         <properties>
-            <!-- we start using our own class to control what we do in the main -->
-            <target.main.class>org.apache.camel.example.client.CamelClientEndpoint</target.main.class>
-         </properties>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>build-helper-maven-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                           <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                           <artifacts>
+                              <artifact>
+                                 <file>target/classes/features.xml</file>
+                                 <type>xml</type>
+                                 <classifier>features</classifier>
+                              </artifact>
+                           </artifacts>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>exec-maven-plugin</artifactId>
+                  <configuration>
+                     <mainClass>org.apache.camel.spring.Main</mainClass>
+                     <includePluginDependencies>false</includePluginDependencies>
+                     <commandlineArgs>-ac META-INF/spring/bridge.xml</commandlineArgs>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
       </profile>
    </profiles>
-   <build>
-
-      <plugins>
-         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>attach-artifacts</id>
-                  <phase>package</phase>
-                  <goals>
-                     <goal>attach-artifact</goal>
-                  </goals>
-                  <configuration>
-                     <artifacts>
-                        <artifact>
-                           <file>target/classes/features.xml</file>
-                           <type>xml</type>
-                           <classifier>features</classifier>
-                        </artifact>
-                     </artifacts>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-
-         <!-- Allows the example to be run via 'mvn compile exec:java' -->
-         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <configuration>
-               <mainClass>${target.main.class}</mainClass>
-               <includePluginDependencies>false</includePluginDependencies>
-               <commandlineArgs>${target.cmd.args}</commandlineArgs>
-            </configuration>
-         </plugin>
-      </plugins>
-
-   </build>
 </project>

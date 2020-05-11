@@ -1,1 +1,0 @@
-export ARTEMIS_HOME=~/IdeaProjects/activemq-artemis/artemis-distribution/target/apache-artemis-2.13.0-SNAPSHOT-bin/apache-artemis-2.13.0-SNAPSHOT/

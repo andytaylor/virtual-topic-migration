@@ -42,9 +42,6 @@ public class Receiver {
                System.out.println(String.format("Received %d in %.2f seconds", count, (1.0*diff/1000.0)));
                break;
             } else {
-               if( count != msg.getIntProperty("id") ) {
-                  System.out.println("mismatch: "+count+"!="+msg.getIntProperty("id"));
-               }
                count = msg.getIntProperty("id");
 
                if( count == 0 ) {

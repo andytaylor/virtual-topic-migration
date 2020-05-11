@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>org.apache.activemq.example</groupId>
+      <artifactId>virtual-topic-migration</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+   </parent>
+
+
+   <artifactId>artemis-virtual-topic</artifactId>
+   <packaging>jar</packaging>
+   <name>ActiveMQ Artemis virtual topic example</name>
+   <version>1.0.0-SNAPSHOT</version>
+
+
+   <dependencies>
+      <dependency>
+         <groupId>org.apache.activemq</groupId>
+         <artifactId>apache-artemis</artifactId>
+         <type>zip</type>
+         <classifier>bin</classifier>
+         <version>${artemis.version}</version>
+         <exclusions>
+         <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+         </exclusion>
+         </exclusions>
+      </dependency>
+   </dependencies>
+
+   <profiles>
+      <profile>
+         <id>createartemis</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-dependency-plugin</artifactId>
+                  <version>3.1.2</version>
+                  <executions>
+                     <execution>
+                        <id>unpack</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                           <goal>unpack</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+                  <configuration>
+                     <artifactItems>
+                        <artifactItem>
+                           <groupId>org.apache.activemq</groupId>
+                           <artifactId>apache-artemis</artifactId>
+                           <version>${artemis.version}</version>
+                           <type>zip</type>
+                           <classifier>bin</classifier>
+                        </artifactItem>
+                     </artifactItems>
+                     <overWrite>true</overWrite>
+                     <outputDirectory>${build.directory}</outputDirectory>
+                  </configuration>
+               </plugin>
+               <plugin>
+                  <groupId>org.apache.activemq</groupId>
+                  <artifactId>artemis-maven-plugin</artifactId>
+                  <version>${artemis.version}</version>
+                  <executions>
+                  <execution>
+                     <phase>test-compile</phase>
+                     <id>create0</id>
+                     <goals>
+                        <goal>create</goal>
+                     </goals>
+                     <configuration>
+                        <!-- this makes it easier in certain envs -->
+                        <javaOptions>-Djava.net.preferIPv4Stack=true</javaOptions>
+                        <instance>${project.build.directory}/artemis-instance</instance>
+                        <configuration>${project.build.directory}/classes/artemis-instance</configuration>
+                        <home>${project.build.directory}/apache-artemis-${artemis.version}</home>
+                        <noWeb>false</noWeb>
+                        <portOffset>100</portOffset>
+                        <args>
+                           <arg>--java-options</arg>
+                           <arg>-ea</arg>
+                        </args>
+                     </configuration>
+                  </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <artifactId>maven-resources-plugin</artifactId>
+                  <version>2.6</version>
+                  <executions>
+                     <execution>
+                        <id>copy-resources</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                           <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                           <outputDirectory>${project.build.directory}/activemq/conf</outputDirectory>
+                           <resources>
+                              <resource>
+                                 <directory>${basedir}/src/main/resources</directory>
+                              </resource>
+                           </resources>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+      <profile>
+         <id>producer</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>exec-maven-plugin</artifactId>
+                  <version>1.6.0</version>
+                  <executions>
+                     <execution>
+                        <phase>test</phase>
+                        <goals>
+                           <goal>java</goal>
+                        </goals>
+                        <configuration>
+                           <mainClass>org.apache.activemq.example.Sender</mainClass>
+                           <arguments>
+                              <argument>VirtualTopic.TopicA</argument>
+                           </arguments>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+
+      </profile>
+      <profile>
+         <id>consumer1</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>exec-maven-plugin</artifactId>
+                  <version>1.6.0</version>
+                  <executions>
+                     <execution>
+                        <phase>test</phase>
+                        <goals>
+                           <goal>java</goal>
+                        </goals>
+                        <configuration>
+                           <mainClass>org.apache.activemq.example.Receiver</mainClass>
+                           <arguments>
+                              <argument>Consumer.myConsumer1.VirtualTopic.TopicA</argument>
+                           </arguments>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+
+      </profile>
+      <profile>
+         <id>consumer2</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>exec-maven-plugin</artifactId>
+                  <version>1.6.0</version>
+                  <executions>
+                     <execution>
+                        <phase>test</phase>
+                        <goals>
+                           <goal>java</goal>
+                        </goals>
+                        <configuration>
+                           <mainClass>org.apache.activemq.example.Receiver</mainClass>
+                           <arguments>
+                              <argument>Consumer.myConsumer2.VirtualTopic.TopicA</argument>
+                           </arguments>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+
+      </profile>
+
+      <profile>
+         <id>consumer3</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>exec-maven-plugin</artifactId>
+                  <version>1.6.0</version>
+                  <executions>
+                     <execution>
+                        <phase>test</phase>
+                        <goals>
+                           <goal>java</goal>
+                        </goals>
+                        <configuration>
+                           <mainClass>org.apache.activemq.example.Receiver</mainClass>
+                           <arguments>
+                              <argument>Consumer.myConsumer3.VirtualTopic.TopicA</argument>
+                              <argument>localhost</argument>
+                              <argument>61716</argument>
+                           </arguments>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+
+      </profile>
+   </profiles>
+
+</project>
