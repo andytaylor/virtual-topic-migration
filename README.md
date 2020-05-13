@@ -50,5 +50,26 @@ mvn exec:java -PCamelServer
 you should now see the message also being sent to the 3rd consumer sharing the load on Artemis, you can now stop the activemq consumers
 and start more if needed on Artemis. The consumers are now migrated to Artemis with no loss of service.
 
+
+Also instead of using openwire you can use an amqp jms consumer and use an fqqn, for this you would need to change the queue in the Artemis broker.xml to:
+
+```
+<address name="VirtualTopic.TopicA">
+   <multicast>
+      <queue name="Consumer.myConsumer1.VirtualTopic.TopicA"/>
+   </multicast>
+</address>
+```
+
+and the consumer would consume from:
+
+```
+VirtualTopic.TopicA::Consumer.myConsumer1.VirtualTopic.TopicA
+```
+You can run the amqp receive via:
+
+```
+mvn verify -Partemisamqpconsumer
+```
 ##Migrating consumers to use JMS 2.0 via AMQP
 
