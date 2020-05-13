@@ -92,7 +92,6 @@ under the License.
                            <classifier>bin</classifier>
                         </artifactItem>
                      </artifactItems>
-                     <overWrite>true</overWrite>
                      <outputDirectory>${build.directory}</outputDirectory>
                   </configuration>
                </plugin>
